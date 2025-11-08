@@ -99,4 +99,6 @@ button.view-project-btn { -webkit-appearance: none; appearance: none; background
 .SnappyScrollThingy.snap-proximity { scroll-snap-type: y proximity !important; }
 .SnappyScrollThingy.snap-strong    { scroll-snap-type: y mandatory !important; }
 
-
+#landing[data-prehydrate] .SnappyScrollThingy {
+  scroll-snap-type: none !important;
+}

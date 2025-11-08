@@ -144,7 +144,7 @@ export function useProjectLoader(key: ProjectKey) {
     }
 
     if (key === 'dynamic') {
-      // Option A: the dynamic SSR enhancer computes overlay sizing AND mounts shadow app
+      // the dynamic SSR enhancer computes overlay sizing AND mounts shadow app
       return async () => {
         const Enhancer = (await import('../../ssr/projects/dynamic.enhancer')).default;
         return {

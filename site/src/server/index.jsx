@@ -10,7 +10,7 @@ import App from '../App';
 import { ChunkExtractor } from '@loadable/server';
 import { CacheProvider } from '@emotion/react';
 import { createEmotion } from './emotion';
-import { createProxyMiddleware } from 'http-proxy-middleware'; // ✅ fixed typo
+import { createProxyMiddleware } from 'http-proxy-middleware'; 
 import compression from 'compression';
 
 import highScoreRoute from './highScoreRoute';

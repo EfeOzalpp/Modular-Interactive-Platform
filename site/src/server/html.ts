@@ -187,6 +187,14 @@ ${injectDefaultSiteHead ? defaultTitle : ''}
 ${injectDefaultSiteHead ? defaultDesc  : ''}
 ${IS_DEV ? `<script>window.__ASSET_ORIGIN__="http://"+(window.location.hostname)+":3000"</script>` : ''}
 
+<script>
+  try {
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+  } catch (e) {}
+</script>
+
 ${iconLinks}
 ${appleTouch}
 
