@@ -8,6 +8,7 @@ export const componentMap = {
   rotary: () => import('../../components/block-type-1/rotary-lamp'),
   scoop: () => import('../../components/block-type-1/ice-cream-scoop'),
   dataviz: () => import('../../components/block-type-1/data-visualization'),
+  climate: () => import('../../components/block-type-1/climate-book'),
 } as const;
 
 // ----- Split loaders for dynamic (frame & shadow)
@@ -38,7 +39,7 @@ export const gameLoaders = {
 } as const;
 
 // Explicit union preserves "dynamic" as a valid key
-export type ProjectKey = 'rotary' | 'scoop' | 'dataviz' | 'game' | 'dynamic';
+export type ProjectKey = 'rotary' | 'scoop' | 'dataviz' | 'climate' | 'game' | 'dynamic';
 
 export interface ProjectMeta {
   key: ProjectKey;
@@ -74,6 +75,11 @@ export const baseProjects: Project[] = [
     key: 'dataviz',
     title: 'Data Visualization',
     lazyImport: () => toComponent(import('../../components/block-type-1/data-visualization')),
+  },
+    {
+    key: 'climate', 
+    title: 'Writing & Book Design',
+    lazyImport: () => toComponent(import('../../components/block-type-1/climate-book')),
   },
   {
     key: 'game',

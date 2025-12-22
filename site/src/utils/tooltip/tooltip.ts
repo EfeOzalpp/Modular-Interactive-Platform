@@ -15,6 +15,7 @@ const TITLE_BY_KEY: Record<string, string> = {
   'data-viz': 'Data Visualization',
   'block-g': 'Evade the Rock',
   'dynamic': 'Dynamic App',
+  'climate': 'Climate Book',
 };
 
 function bgForKey(key: string) {
