@@ -8,8 +8,6 @@ import ExitButton from './block-g-exit';
 import GameOverController from '../../ssr/content/game.enhancer/game-over-controller';
 
 import { useRealMobileViewport } from '../../shared/useRealMobile';
-import desktopOnboarding from '../../json-assets/desktop-onboarding.json';
-import mobileOnboarding from '../../json-assets/mobile-onboarding.json';
 
 import HeavyMount from '../../behaviors/heavy-mount';
 import { gameLoaders } from '../../content-orchestration/component-loader';
@@ -17,6 +15,11 @@ import { useHighScoreSubscription } from './useHighScoreSubscription';
 import GameInputGuards from '../../ssr/content/game.enhancer/game-input-guards';
 
 import GameViewportOverlay from './game-viewport-overlay';
+import {
+  hasSeenRockEscapadeTutorial,
+  markRockEscapadeTutorialSeen,
+} from './onboarding-storage';
+import { loadRockEscapadeTutorial } from './load-onboarding-tutorial';
 
 import '../../styles/block-type-g.css';
 
@@ -69,10 +72,10 @@ export default function BlockGHost({ blockId }: { blockId: string }) {
     // Preload the chunk regardless
     void gameLoaders.game();
 
-    // Reset state & show countdown
+    // Reset state and only show the controls tutorial on the first completed visit.
     setCoins(0);
     setFinalScore(null);
-    setCountdownPhase('lottie');
+    setCountdownPhase(hasSeenRockEscapadeTutorial() ? null : 'lottie');
 
     // Mount the overlay (portal) immediately — no native fullscreen
     activateGameMode();
@@ -93,16 +96,22 @@ export default function BlockGHost({ blockId }: { blockId: string }) {
     let mounted = true;
 
     (async () => {
+      const animationData = await loadRockEscapadeTutorial(isRealMobile);
+      if (!mounted || !lottieRef.current) return;
+
       anim = await lottie.loadAnimation({
         container: lottieRef.current!,
         renderer: 'svg',
         loop: false,
         autoplay: true,
-        animationData: isRealMobile ? mobileOnboarding : desktopOnboarding,
+        animationData,
       });
       if (!mounted || !anim) return;
 
-      const onComplete = () => setCountdownPhase('begin');
+      const onComplete = () => {
+        markRockEscapadeTutorialSeen();
+        setCountdownPhase('begin');
+      };
       anim.addEventListener('complete', onComplete);
 
       return () => anim?.removeEventListener?.('complete', onComplete);

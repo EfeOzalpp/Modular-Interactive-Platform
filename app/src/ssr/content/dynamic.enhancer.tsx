@@ -177,16 +177,28 @@ const DynamicEnhancer: React.FC = () => {
 
   // ----- loader visibility
   const [showLoader, setShowLoader] = useState(false); // start hidden until we begin mount
+  const [loaderHiding, setLoaderHiding] = useState(false);
   const watchdogRef = useRef<number | null>(null);
+  const loaderFadeRef = useRef<number | null>(null);
+
+  const beginLoaderExit = () => {
+    setLoaderHiding(true);
+    if (loaderFadeRef.current) window.clearTimeout(loaderFadeRef.current);
+    loaderFadeRef.current = window.setTimeout(() => {
+      setShowLoader(false);
+      loaderFadeRef.current = null;
+    }, 180);
+  };
 
   // when we start mounting, show loader (and arm watchdog)
   useEffect(() => {
     if (!shouldMountShadow) return;
+    setLoaderHiding(false);
     setShowLoader(true);
     if (watchdogRef.current) window.clearTimeout(watchdogRef.current);
     watchdogRef.current = window.setTimeout(() => {
       // fail-safe: hide after 8s even if onReady never fires
-      setShowLoader(false);
+      beginLoaderExit();
       hideSsrSpinner();
     }, 8000);
     return () => {
@@ -194,13 +206,17 @@ const DynamicEnhancer: React.FC = () => {
         window.clearTimeout(watchdogRef.current);
         watchdogRef.current = null;
       }
+      if (loaderFadeRef.current) {
+        window.clearTimeout(loaderFadeRef.current);
+        loaderFadeRef.current = null;
+      }
     };
   }, [shouldMountShadow]);
 
   // listen to global hydrated event (secondary path)
   useEffect(() => {
     const onHydrated = () => {
-      setShowLoader(false);
+      beginLoaderExit();
       hideSsrSpinner();
     };
     window.addEventListener('dynamic-app:hydrated', onHydrated as EventListener);
@@ -209,13 +225,18 @@ const DynamicEnhancer: React.FC = () => {
 
   const hideSsrSpinner = () => {
     const loader = document.getElementById('dynamic-overlay-loader');
-    if (loader) loader.style.display = 'none';
+    if (loader) {
+      loader.classList.add('is-hidden');
+      loader.setAttribute('aria-hidden', 'true');
+    }
   };
 
   if (!overlayEl) return null;
 
   const handleReady = () => {
-    setShowLoader(false);
+    const app = overlayEl.querySelector<HTMLElement>('.embedded-app');
+    if (app) app.classList.add('is-ready');
+    beginLoaderExit();
     hideSsrSpinner();
     window.dispatchEvent(new CustomEvent('dynamic-app:hydrated'));
   };
@@ -223,6 +244,7 @@ const DynamicEnhancer: React.FC = () => {
   return createPortal(
     <>
       {showLoader && (
+        <div id="dynamic-overlay-loader" className={loaderHiding ? 'is-hidden' : undefined}>
           <LoadingHub
             className="loading-hub--dynamic loading-hub--center"
             keyword="dynamic"
@@ -236,6 +258,7 @@ const DynamicEnhancer: React.FC = () => {
             ]}
             minHeight={72}
           />
+        </div>
       )}
 
       {ShadowInbound && shouldMountShadow && (

@@ -44,9 +44,15 @@ const ShadowEntry: React.FC<Props> = ({ blockId }) => {
 
   // Called by DynamicAppInbound (guarded there) on first paint
   const handleReady = () => {
-    // hide any SSR/client spinner if present
+    const app = target?.querySelector<HTMLElement>('.embedded-app');
+    if (app) app.classList.add('is-ready');
+
+    // Fade the loader without removing a flex item from the overlay's layout.
     const loader = document.getElementById('dynamic-overlay-loader');
-    if (loader) loader.style.display = 'none';
+    if (loader) {
+      loader.classList.add('is-hidden');
+      loader.setAttribute('aria-hidden', 'true');
+    }
     // notify listeners (e.g. enhancer / other logic)
     window.dispatchEvent(new CustomEvent('dynamic-app:hydrated'));
   };

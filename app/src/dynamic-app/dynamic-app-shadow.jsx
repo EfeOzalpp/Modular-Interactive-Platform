@@ -23,8 +23,6 @@ const DynamicAppInbound = ({ onFocusChange, onReady }) => {
       const root = shadowRef.current?.getRootNode?.();
       if (root && root.host) {
         setShadowRoot(root);
-        // first visual frame -> tell enhancer we’re ready
-        requestAnimationFrame(sendReady);
       } else {
         console.warn('[Not a ShadowRoot]', root);
       }

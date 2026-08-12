@@ -51,11 +51,6 @@ function DynamicTheme({ onReady }) {
   }, [injectStyle]);
 
   useEffect(() => {
-    const id = requestAnimationFrame(() => { try { onReady?.(); } catch {} });
-    return () => cancelAnimationFrame(id);
-  }, [onReady]);
-
-  useEffect(() => {
     const snap = getPreloadedDynamicApp();
     if (snap.icons) setSvgIcons(snap.icons);
     if (Array.isArray(snap.images)) setSortedImages(snap.images);
@@ -76,6 +71,22 @@ function DynamicTheme({ onReady }) {
 
     return () => { cancelled = true; };
   }, []);
+
+  // Reveal the embedded app only after its initial data and injected styles
+  // have committed. Two frames let the hidden layout settle before crossfade.
+  useEffect(() => {
+    if (isLoading) return;
+    let revealFrame = null;
+    const settleFrame = requestAnimationFrame(() => {
+      revealFrame = requestAnimationFrame(() => {
+        try { onReady?.(); } catch {}
+      });
+    });
+    return () => {
+      cancelAnimationFrame(settleFrame);
+      if (revealFrame != null) cancelAnimationFrame(revealFrame);
+    };
+  }, [isLoading, onReady]);
 
   const observerRoot = useRef(null);
   useEffect(() => {

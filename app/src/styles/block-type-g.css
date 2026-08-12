@@ -108,7 +108,7 @@ body.game-mode-active .project-pane#block-game {z-index: 10000; position: relati
   #block-game .block-g-stage, #block-game .block-g-stage > div  {
   height: 98dvh !important; }
   .block-type-g { height: 98dvh; }
-  .block-g-exit { bottom: 16px; left: 16px; padding: 4px 24px; }
+  .block-g-exit { bottom: 16px; left: 16px; padding: 8px 16px; }
   .gameover-text { margin-bottom: 8px; }
   .coin { width: 14em; } .coin-counter { top: 16px; align-items: center;}
   .gameover-text-area {bottom: 168px;}
@@ -128,7 +128,7 @@ body.game-mode-active .project-pane#block-game {z-index: 10000; position: relati
   height: 92dvh !important; }
   .block-g-exit h4 { padding-left: 0.4em; padding-right: 0.4em; }
   .block-type-g { height: 92dvh !important; }
-  .block-g-exit { bottom: 24px; left: 24px; }
+  .block-g-exit { padding: 8px 16px; bottom: 24px; left: 24px; }
   .coin { width: 12em; } .coin-counter { top: 4px; align-items: center;}
   .gameover-text-area {bottom: 168px;}
   .gameover-lottie {width: calc(100% + 24em); margin-top: -144px;}
@@ -144,7 +144,7 @@ body.game-mode-active .project-pane#block-game {z-index: 10000; position: relati
   height: 96dvh !important; }
   .block-type-g { height: 96dvh !important; }
   .block-g-exit h4 { padding-left: 0.3em; padding-right: 0.3em; }
-  .block-g-exit { padding: 0px 32px; bottom: 24px; left: 26px; }
+  .block-g-exit { padding: 8px 16px; bottom: 24px; left: 26px; }
   .coin { width: 16em; } .coin-counter { top: 0px; display: flex; }
   .coin-count { top: 16px; position: relative; }
   .coin2 { width: 6em; }

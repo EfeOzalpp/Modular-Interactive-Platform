@@ -16,8 +16,11 @@ import { useHighScoreSubscription } from '../../../components/rock-escapade/useH
 import GameInputGuards from './game-input-guards';
 import GameViewportOverlay from '../../../components/rock-escapade/game-viewport-overlay';
 
-import desktopOnboarding from '../../../json-assets/desktop-onboarding.json';
-import mobileOnboarding from '../../../json-assets/mobile-onboarding.json';
+import {
+  hasSeenRockEscapadeTutorial,
+  markRockEscapadeTutorialSeen,
+} from '../../../components/rock-escapade/onboarding-storage';
+import { loadRockEscapadeTutorial } from '../../../components/rock-escapade/load-onboarding-tutorial';
 
 const GAME_MODE_CLASS = 'game-mode-active';
 const activateGameMode = () => document.body.classList.add(GAME_MODE_CLASS);
@@ -245,7 +248,7 @@ const GameStage: React.FC<{
     setStarted(true);
     setCoins(0);
     setFinalScore(null);
-    setCountdownPhase('lottie');
+    setCountdownPhase(hasSeenRockEscapadeTutorial() ? null : 'lottie');
     onboardingEl.style.transition = 'opacity 180ms ease';
     onboardingEl.style.opacity = '0';
     window.setTimeout(() => {
@@ -306,15 +309,21 @@ const GameStage: React.FC<{
     let mounted = true;
 
     (async () => {
+      const animationData = await loadRockEscapadeTutorial(isRealMobile);
+      if (!mounted || !lottieRef.current) return;
+
       anim = await lottie.loadAnimation({
         container: lottieRef.current!,
         renderer: 'svg',
         loop: false,
         autoplay: true,
-        animationData: isRealMobile ? mobileOnboarding : desktopOnboarding,
+        animationData,
       });
       if (!mounted || !anim) return;
-      const onComplete = () => setCountdownPhase('begin');
+      const onComplete = () => {
+        markRockEscapadeTutorialSeen();
+        setCountdownPhase('begin');
+      };
       anim.addEventListener('complete', onComplete);
       return () => anim?.removeEventListener?.('complete', onComplete);
     })();
