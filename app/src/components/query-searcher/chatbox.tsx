@@ -1,27 +1,14 @@
 // src/components/query-searcher/chatbox.tsx
 import React, { useEffect, useRef, useState } from 'react';
 import { useQuerySearcher } from '../../state/providers/query-searcher-context';
-import type { QuerySearcherMode } from '../../state/providers/query-searcher-context';
 
-const MODES: { key: QuerySearcherMode; label: string; icon?: React.ReactNode }[] = [
-  { key: 'conversation', label: 'Conversation' },
-  { key: 'job-search',   label: 'Job Search', icon: (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M21 21L16.65 16.65M11 6C13.7614 6 16 8.23858 16 11M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  )},
-];
-
-const PLACEHOLDERS: Record<QuerySearcherMode, string> = {
-  'conversation': "What's on your mind?",
-  'job-search':   'Enter the job title you\'re seeking',
-};
+const JOB_SEARCH_PLACEHOLDER = 'What job title would you like to search for?';
 
 const getScrollContainer = () =>
   document.querySelector('.Scroll') as HTMLElement | null;
 
 export default function ChatBox() {
-  const { mode, setMode, sendMessage, isStreaming } = useQuerySearcher();
+  const { sendMessage, isStreaming } = useQuerySearcher();
   const [input, setInput] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -58,8 +45,6 @@ export default function ChatBox() {
     }
   };
 
-  const switcherModes = MODES.slice(1);
-
   return (
     <div className="at-card">
       <textarea
@@ -70,35 +55,18 @@ export default function ChatBox() {
         onChange={e => setInput(e.target.value)}
         onKeyDown={handleKeyDown}
         onFocus={handleFocus}
-        placeholder={PLACEHOLDERS[mode]}
+        placeholder={JOB_SEARCH_PLACEHOLDER}
         rows={1}
       />
       <div className="at-footer-row">
         <div className="at-mode-row">
-          <span
-            className={`at-conversation-label${mode === 'conversation' ? ' active' : ''}`}
-            onClick={() => setMode('conversation')}
-          >
-            {MODES[0].label}
-          </span>
           <div className="at-mode-switcher">
-            {switcherModes.map(m => (
-              <button
-                key={m.key}
-                className={`at-mode-btn${mode === m.key ? ' active' : ''}`}
-                onClick={() => setMode(mode === m.key ? 'conversation' : m.key)}
-              >
-                {m.icon}
-                {m.label}
-                {mode === m.key && (
-                  <span className="at-mode-close">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M17 7L7 17M7 7L17 17" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </span>
-                )}
-              </button>
-            ))}
+            <button className="at-mode-btn active" type="button" aria-pressed="true" disabled>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21 21L16.65 16.65M11 6C13.7614 6 16 8.23858 16 11M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              Job Search
+            </button>
           </div>
         </div>
         <button

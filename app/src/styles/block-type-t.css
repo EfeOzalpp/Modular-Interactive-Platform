@@ -50,17 +50,12 @@
     /* Footer row */
     .at-footer-row { display: flex; flex-direction: row; justify-content: space-between; align-items: center; margin-top: 8px; }
     .at-mode-row { display: flex; flex-direction: row; padding-left: 8px; align-items: center; gap: 12px; }
-    .at-conversation-label { color: rgb(90, 90, 90); font-size: var(--font-body); cursor: pointer; white-space: nowrap; transition: color 0.15s; user-select: none; }
-    .at-conversation-label.active { color: rgb(220, 220, 220); }
-
     /* Segmented control */
     .at-mode-switcher { display: flex; overflow: hidden; }
     .at-mode-btn { position: relative; flex: 1; border: none; background: transparent; cursor: pointer; border-radius: 4px; padding: 8px 10px; font-size: var(--font-body); color: rgb(150, 150, 150); transition: color 0.15s, background 0.18s; white-space: nowrap; display: flex; align-items: center; justify-content: center; gap: 6px; }
-    .at-mode-btn.active { color: rgb(220, 220, 220); background: rgba(255, 255, 255, 0.11); border-radius: 4px; padding-right: 28px; }
+    .at-mode-btn:disabled { cursor: default; }
+    .at-mode-btn.active { color: rgb(220, 220, 220); background: rgba(255, 255, 255, 0.11); border-radius: 4px; }
     .at-mode-btn.active > svg { color: rgb(100, 215, 175); transition: color 0.15s; }
-    .at-mode-close { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); display: flex; align-items: center; color: rgb(160, 160, 160); transition: color 0.15s; }
-    .at-mode-close:hover { color: rgb(220, 220, 220); }
-
     /* Send button */
     .at-send-btn { height: 30px; padding: 0 14px; border: none; border-radius: 6px; background: rgb(220, 220, 220); color: #1c1c1c; cursor: pointer; font-size: var(--font-body); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: opacity 0.15s; }
     .at-send-btn:disabled { opacity: 0.25; cursor: default; }

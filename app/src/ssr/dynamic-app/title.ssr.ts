@@ -44,7 +44,7 @@ export function renderTitleHTML(): string {
   return `
     <div class="title-container" id="dynamic-title-root">
       <div class="static-title">
-        <h1>MassArt 2026</h1>
+        <h1>MassArt 2024</h1>
       </div>
       <div class="moving-title" id="dynamic-moving-title">
         <h1 class="title-with-icon moving-text-wrapper static-color-title" id="dynamic-moving-text-wrapper">

@@ -1,12 +1,9 @@
 // src/state/providers/query-searcher-context.tsx
 import React, { createContext, useState, useContext, useRef, useCallback } from 'react';
 
-export type QuerySearcherMode = 'conversation' | 'job-search';
 export type Message = { role: 'user' | 'assistant'; content: string };
 
 interface QuerySearcherContextType {
-  mode: QuerySearcherMode;
-  setMode: (m: QuerySearcherMode) => void;
   messages: Message[];
   sendMessage: (content: string) => void;
   isStreaming: boolean;
@@ -19,18 +16,11 @@ interface QuerySearcherContextType {
 
 const QuerySearcherContext = createContext<QuerySearcherContextType | undefined>(undefined);
 
-const EMPTY_THREADS: Record<QuerySearcherMode, Message[]> = {
-  'conversation': [],
-  'job-search': [],
-};
-
 export function QuerySearcherProvider({ children }: { children: React.ReactNode }) {
-  const [mode, setMode] = useState<QuerySearcherMode>('conversation');
-  const [threads, setThreads] = useState<Record<QuerySearcherMode, Message[]>>(EMPTY_THREADS);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
   const [scrollPercent, setScrollPercent] = useState(100);
 
-  const messages = threads[mode];
   const hasMessages = messages.length > 0;
 
   const scrollToBottomRef = useRef<() => void>(() => {});
@@ -38,11 +28,10 @@ export function QuerySearcherProvider({ children }: { children: React.ReactNode 
   const registerScrollToBottom = useCallback((fn: () => void) => { scrollToBottomRef.current = fn; }, []);
 
   const sendMessage = useCallback(async (content: string) => {
-    const activeMode = mode;
     const userMsg: Message = { role: 'user', content };
-    const nextMessages: Message[] = [...threads[activeMode], userMsg];
+    const nextMessages: Message[] = [...messages, userMsg];
 
-    setThreads(prev => ({ ...prev, [activeMode]: [...nextMessages, { role: 'assistant', content: '' }] }));
+    setMessages([...nextMessages, { role: 'assistant', content: '' }]);
     setIsStreaming(true);
 
     try {
@@ -73,31 +62,31 @@ export function QuerySearcherProvider({ children }: { children: React.ReactNode 
           try {
             const { text } = JSON.parse(payload);
             if (text) {
-              setThreads(prev => {
-                const thread = [...prev[activeMode]];
+              setMessages(prev => {
+                const thread = [...prev];
                 thread[thread.length - 1] = {
                   ...thread[thread.length - 1],
                   content: thread[thread.length - 1].content + text,
                 };
-                return { ...prev, [activeMode]: thread };
+                return thread;
               });
             }
           } catch {}
         }
       }
     } catch (err) {
-      setThreads(prev => {
-        const thread = [...prev[activeMode]];
+      setMessages(prev => {
+        const thread = [...prev];
         thread[thread.length - 1] = { role: 'assistant', content: 'Something went wrong.' };
-        return { ...prev, [activeMode]: thread };
+        return thread;
       });
     } finally {
       setIsStreaming(false);
     }
-  }, [threads, mode]);
+  }, [messages]);
 
   return (
-    <QuerySearcherContext.Provider value={{ mode, setMode, messages, sendMessage, isStreaming, hasMessages, scrollPercent, setScrollPercent, requestScrollToBottom, registerScrollToBottom }}>
+    <QuerySearcherContext.Provider value={{ messages, sendMessage, isStreaming, hasMessages, scrollPercent, setScrollPercent, requestScrollToBottom, registerScrollToBottom }}>
       {children}
     </QuerySearcherContext.Provider>
   );

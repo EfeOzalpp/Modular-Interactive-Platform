@@ -4,7 +4,7 @@
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "jsx": "react-jsx",
     "module": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "Bundler",
     "allowJs": true,
     "checkJs": false,
     "noEmit": true,
@@ -14,8 +14,9 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
+    "noUncheckedSideEffectImports": true,
     "forceConsistentCasingInFileNames": true,
-    "baseUrl": "."
+    "types": ["node", "react", "react-dom", "jest"]
   },
-  "include": ["src", "src/types", "src/behaviors/.tsx"]
+  "include": ["src"]
 }

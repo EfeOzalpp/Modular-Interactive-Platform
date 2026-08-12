@@ -202,7 +202,7 @@ const TitleDivider = ({
     <div className="title-container" ref={rootRef}>
       <div className="static-title">
         <h1>
-          MassArt 2026
+          MassArt 2024
         </h1>
       </div>
 
