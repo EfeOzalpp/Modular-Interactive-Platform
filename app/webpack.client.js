@@ -66,13 +66,17 @@ class AssetManifestPlugin {
 module.exports = (_env, argv) => {
   const mode = argv.mode || 'production';
   const isProduction = mode === 'production';
+  const devServerPort = Number(process.env.PORT) || 3000;
   const styleLoader = isProduction ? MiniCssExtractPlugin.loader : require.resolve('style-loader');
 
   return {
     name: 'client',
     mode,
     target: 'web',
-    entry: path.resolve(SRC_DIR, 'index.js'),
+    entry: [
+      path.resolve(SRC_DIR, 'polyfills/crypto-random-uuid.js'),
+      path.resolve(SRC_DIR, 'index.js'),
+    ],
     output: {
       path: BUILD_DIR,
       publicPath: '/',
@@ -89,7 +93,7 @@ module.exports = (_env, argv) => {
       extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
       modules: [path.resolve(APP_DIR, 'node_modules')],
       alias: {
-        q5$: path.resolve(APP_DIR, 'node_modules/q5/q5.js'),
+        q5$: path.resolve(SRC_DIR, 'vendor/q5-browser.js'),
         'skia-canvas': false,
         canvas: false,
       },
@@ -194,7 +198,7 @@ module.exports = (_env, argv) => {
     devtool: isProduction ? 'source-map' : 'eval-cheap-module-source-map',
     devServer: {
       host: process.env.HOST || '0.0.0.0',
-      port: Number(process.env.PORT) || 3000,
+      port: devServerPort,
       allowedHosts: 'all',
       hot: true,
       historyApiFallback: true,
@@ -202,7 +206,7 @@ module.exports = (_env, argv) => {
       static: { directory: path.resolve(APP_DIR, 'public'), watch: true },
       devMiddleware: { writeToDisk: (filePath) => /loadable-stats\.json$/.test(filePath) },
       client: {
-        webSocketURL: 'auto://0.0.0.0:0/ws',
+        webSocketURL: `auto://0.0.0.0:${devServerPort}/ws`,
       },
     },
     performance: { hints: false },
